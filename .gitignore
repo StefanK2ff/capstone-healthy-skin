@@ -130,6 +130,9 @@ dmypy.json
 
 
 data/*.csv
+data/*.jpg
+data/*.zip
+data/*.tab
 models/*.sav
 mlruns
 models/*
