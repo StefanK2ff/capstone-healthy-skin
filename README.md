@@ -19,5 +19,11 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### Image Folder
-./Capstone-Healthy-Skin/data/jpg
+### Data Folder
+The jpgs go here:
+```BASH
+./Capstone-Healthy-Skin/data/jpgs
+```
+The corresponding metadata goes here:
+```BASH
+./Capstone-Healthy-Skin/data
