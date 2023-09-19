@@ -143,6 +143,7 @@ models/*
 
 # General Mac stuff
 .DS_Store
+**/.DS_Store
 .AppleDouble
 .LSOverride
 
