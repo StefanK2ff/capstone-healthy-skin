@@ -128,7 +128,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-
+# Excluding some directories
+data
 data/*.csv
 data/*.jpg
 data/*.zip
