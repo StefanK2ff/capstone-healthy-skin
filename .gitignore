@@ -140,3 +140,6 @@ models/*
 
 #config file has sensitive data
 .mlflow_uri
+
+#Apple dings
+.DS_Store
