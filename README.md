@@ -19,11 +19,14 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### Data Folder
-The jpgs go here:
-```BASH
-./Capstone-Healthy-Skin/data/jpgs
-```
-The corresponding metadata goes here:
-```BASH
+### Image Folder
+- please unpack all jpgs from HAM10000_images_part1.zip (5000 JPEG files) &
+HAM10000_images_part2.zip (5015 JPEG files) to:  
+./Capstone-Healthy-Skin/data/jpg
+
+### Metadata Folder
+- please unpack HAM10000_metadata.tab to:
 ./Capstone-Healthy-Skin/data
+
+### Datasets - Source:
+https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DBW86T
