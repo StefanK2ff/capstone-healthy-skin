@@ -168,3 +168,6 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# scripts that are needed for the image augmentation
+*.sh
