@@ -6,7 +6,7 @@ import numpy as np
 import string 
 import random
 
-def img_load_and_transform(image_path, target_size=(128, 128)) -> np.ndarray:
+def img_load_and_transform(image_path, target_size) -> np.ndarray:
 
     """Load an image from disk and resize it to the target size and returns it as a NumPy array.
 

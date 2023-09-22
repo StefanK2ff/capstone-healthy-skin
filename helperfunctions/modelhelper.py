@@ -25,7 +25,7 @@ def model_plot_accuracy(history) -> None:
     plt.legend(loc='lower right')
 
 
-def model_accuracy_on_test(model, test_df, targetvar, imagesize=(128,128)) -> None:
+def model_accuracy_on_test(model, test_df, targetvar, imagesize) -> None:
 
     # load test images from test_df
     test_images = []
@@ -33,12 +33,12 @@ def model_accuracy_on_test(model, test_df, targetvar, imagesize=(128,128)) -> No
 
     for i in range(test_df.shape[0]):
         image_path = test_df.iloc[i]['image_path']
-        img = img_load_and_transform(image_path)
+        img = img_load_and_transform(image_path, imagesize)
 
         # convert img to np array 
         test_images.append(np.array(img))
         test_labels.append(test_df.iloc[i][targetvar])
-
+    
     # using label encoder to get the labels
     le = LabelEncoder()
     test_labels = le.fit_transform(test_df[targetvar])
@@ -48,5 +48,5 @@ def model_accuracy_on_test(model, test_df, targetvar, imagesize=(128,128)) -> No
 
     # reshaping the test images
     test_images = np.array(test_images).reshape(-1, imagesize[0], imagesize[1], 3)
-
+          
     test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=2)
