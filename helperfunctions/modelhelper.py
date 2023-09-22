@@ -25,7 +25,7 @@ def model_plot_accuracy(history) -> None:
     plt.legend(loc='lower right')
 
 
-def model_accuracy_on_test(model, test_df, targetvar, imagesize=(128,128)) -> None:
+def model_accuracy_on_test(model, test_df, targetvar, imagesize) -> None:
 
     # load test images from test_df
     test_images = []
@@ -33,20 +33,36 @@ def model_accuracy_on_test(model, test_df, targetvar, imagesize=(128,128)) -> No
 
     for i in range(test_df.shape[0]):
         image_path = test_df.iloc[i]['image_path']
-        img = img_load_and_transform(image_path)
+        img = img_load_and_transform(image_path, imagesize)
 
         # convert img to np array 
         test_images.append(np.array(img))
         test_labels.append(test_df.iloc[i][targetvar])
 
+    print("length of image list: ", len(test_images))
+    print("Shape of an image: ", test_images[0].shape)
+    print("length of label list: ", len(test_labels))
+    print("a label: ", test_labels[0])
     # using label encoder to get the labels
     le = LabelEncoder()
     test_labels = le.fit_transform(test_df[targetvar])
 
+    print("length of label list (After LabelEncode): ", len(test_labels))
+    print("a label  (After LabelEncode): ", test_labels[0])
+
     # converting to one hot format / categorial
     test_labels = to_categorical(test_labels)
 
-    # reshaping the test images
-    test_images = np.array(test_images).reshape(-1, imagesize[0], imagesize[1], 3)
+    print("length of label list (After to cat): ", len(test_labels))
+    print(" a label  (After to cat): ", test_labels[0])
 
+    # reshaping the test images
+    test_images = np.array(test_images).reshape(-1, imagesize[0], imagesize[1], 3) # ERROR
+    # reshaping it that the length of the list stays the same
+    
+
+
+    print("length of image list after reshape: ", len(test_images))
+    print("Shape of an image after reshape: ", test_images[0].shape)
+          
     test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=2)
