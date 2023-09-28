@@ -19,6 +19,21 @@ def img_load_and_transform(image_path, target_size) -> np.ndarray:
     """ 
     # Load the image using PIL
     image = Image.open(image_path)
+
+    # Get dimensions
+    width, height = image.size
+
+    # Determine the the shorter dimension
+    shorter_dimension = min(width, height)
+
+    # Compute the left and upper coordinates for cropping
+    left = (width - shorter_dimension) / 2
+    top = (height - shorter_dimension) / 2
+    right = (width + shorter_dimension) / 2
+    bottom = (height + shorter_dimension) / 2
+
+    # Crop the center of the image
+    image = image.crop((left, top, right, bottom))
     
     # Resize the image to the target size
     image = image.resize(target_size)
