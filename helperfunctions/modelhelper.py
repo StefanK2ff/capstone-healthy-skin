@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 from keras.utils import to_categorical
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import confusion_matrix, roc_auc_score
+from sklearn.metrics import confusion_matrix, roc_auc_score, classification_report
 
 from .imagehelper import img_load_and_transform
 
@@ -120,6 +120,12 @@ def model_accuracy_on_test(model, test_df, targetvar, imagesize, verbose=2) -> t
         plt.title('Confusion Matrix')
         plt.show()
         print("\n")
+
+    # Compute classification report
+    if verbose >= 1:
+        print(" > Computing classification report...")
+        print(classification_report(test_labels, predictions))
+
 
     # Evaluate the model on the test set
     if verbose >= 1:
