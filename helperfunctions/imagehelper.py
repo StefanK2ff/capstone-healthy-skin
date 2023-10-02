@@ -19,6 +19,21 @@ def img_load_and_transform(image_path, target_size) -> np.ndarray:
     """ 
     # Load the image using PIL
     image = Image.open(image_path)
+
+    # Get dimensions
+    width, height = image.size
+
+    # Determine the the shorter dimension
+    shorter_dimension = min(width, height)
+
+    # Compute the left and upper coordinates for cropping
+    left = (width - shorter_dimension) / 2
+    top = (height - shorter_dimension) / 2
+    right = (width + shorter_dimension) / 2
+    bottom = (height + shorter_dimension) / 2
+
+    # Crop the center of the image
+    image = image.crop((left, top, right, bottom))
     
     # Resize the image to the target size
     image = image.resize(target_size)
@@ -43,3 +58,59 @@ def generate_random_string(length=6) -> str:
     letters_and_digits = string.ascii_letters + string.digits
 
     return ''.join(random.choice(letters_and_digits) for i in range(length))
+
+
+def center_crop_image(np_image) -> np.ndarray:
+    """_summary_
+    Center crop an image to a square and resize it to the target size
+
+    Args:
+        np_image (np.ndarray): image to be cropped
+    Returns:
+        np.ndarray : cropped image
+    """
+
+    # Convert numpy array to PIL Image
+    image = Image.fromarray((np_image * 255).astype(np.uint8))
+    
+    # Calculate dimensions
+    width, height = image.size
+
+    # Determine the size of the side to be kept (the shorter side)
+    new_dimension = min(width, height)
+
+    # Compute the left and upper coordinates for cropping
+    left = (width - new_dimension) / 2
+    top = (height - new_dimension) / 2
+    right = (width + new_dimension) / 2
+    bottom = (height + new_dimension) / 2
+
+    # Crop the center of the image
+    image = image.crop((left, top, right, bottom))
+    
+    # Convert back to numpy array and rescale
+    np_image = np.array(image) / 255.0
+
+    return np_image
+
+def resize_as_preprocess(np_image, image_size) -> np.ndarray:
+    """_summary_
+    Resize an image to the target size
+
+    Args:
+        np_image (np.ndarray): image to be resized
+        image_size (tuple): target size w*h
+    Returns:
+        np.ndarray : resized image
+    """
+
+    # Convert numpy array to PIL Image
+    image = Image.fromarray((np_image * 255).astype(np.uint8))
+    
+    # Resize the image to the target size
+    image = image.resize(image_size)
+    
+    # Convert back to numpy array and rescale
+    np_image = np.array(image) / 255.0
+
+    return np_image
