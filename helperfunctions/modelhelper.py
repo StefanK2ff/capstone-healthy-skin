@@ -124,7 +124,7 @@ def model_accuracy_on_test(model, test_df, targetvar, imagesize, verbose=2) -> t
     # Compute classification report
     if verbose >= 1:
         print(" > Computing classification report...")
-        print(classification_report(test_labels, predictions))
+        print(classification_report(true_labels, pred_labels))
 
 
     # Evaluate the model on the test set
