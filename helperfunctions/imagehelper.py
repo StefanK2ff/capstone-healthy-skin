@@ -88,8 +88,8 @@ def center_crop_image(np_image) -> np.ndarray:
     # Crop the center of the image
     image = image.crop((left, top, right, bottom))
     
-    # Convert back to numpy array and rescale
-    np_image = np.array(image) / 255.0
+    # Convert back to numpy array 
+    np_image = np.array(image)
 
     return np_image
 
@@ -110,7 +110,7 @@ def resize_as_preprocess(np_image, image_size) -> np.ndarray:
     # Resize the image to the target size
     image = image.resize(image_size)
     
-    # Convert back to numpy array and rescale
-    np_image = np.array(image) / 255.0
+    # Convert back to numpy array 
+    np_image = np.array(image)
 
     return np_image
