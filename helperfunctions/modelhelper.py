@@ -131,9 +131,14 @@ def model_accuracy_on_test(model, test_df, targetvar, imagesize, verbose=2) -> t
     if verbose >= 1:
         print(" > Evaluating model on test set...")
           
-    test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=0 if verbose == 0 else 1)
+    results = model.evaluate(test_images, test_labels, verbose=0 if verbose == 0 else 1)
+    return_results = []
+
+    for metric_value, metric_name in zip(results, model.metrics_names):
+        print(f"{metric_name}: {metric_value}")
+        return_results.append({metric_name: metric_value})
 
     if verbose >= 1:
         print(" > Done.")
 
-    return (test_loss, test_acc, conf_matrix, roc_auc)
+    return (return_results, conf_matrix, roc_auc)
