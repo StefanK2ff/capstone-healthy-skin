@@ -58,7 +58,7 @@ def model_accuracy_on_test(model, test_df, targetvar, imagesize, verbose=2) -> t
         img = img_load_and_transform(image_path, imagesize)
 
         # convert img to np array 
-        test_images.append(np.array(img))
+        test_images.append(np.array(img)/255.0)
         test_labels.append(test_df.iloc[i][targetvar])
 
     if verbose >= 1:
