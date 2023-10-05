@@ -6,7 +6,7 @@ import numpy as np
 import string 
 import random
 from time import sleep
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 def img_load_and_transform(image_path, target_size) -> np.ndarray:
 
@@ -65,44 +65,31 @@ def generate_random_string(length=6) -> str:
     return ''.join(random.choice(letters_and_digits) for i in range(length))
 
 
-def center_crop_image(np_image) -> np.ndarray:
+def center_crop_image(np_image, verbose=0) -> np.ndarray:
     """_summary_
     Center crop an image to a square and resize it to the target size
 
     Args:
-        np_image (np.ndarray): image to be cropped
+        np_image (np.ndarray): image to be cropped as normalized array
     Returns:
         np.ndarray : cropped image
     """
-    #image = Image.fromarray((np_image * 255).astype(np.uint8))
-    modes = ['1', 'L', 'P', 'RGB', 'RGBA', 'CMYK', 'YCbCr', 'LAB', 'HSV', 'I', 'F', 'LA', 'PA', 'RGBX', 'RGBa', 'La', 'I;16', 'I;16L', 'I;16B', 'I;16N', 'BGR;15', 'BGR;16', 'BGR;24']
-    # Convert numpy array to PIL Image, rescaling assumes image being rescaled beforehand
-    for mode in modes:
-        try:
-            print(f"trying {mode}")
-            #print(np_image)
-            # maximum vlaue of np_image
-            print(np.max(np_image))
-            print(np.min(np_image))
-            sleep(10)
-            image = Image.fromarray(np_image, mode=mode)
-
-            plt.imshow(image)
-            plt.show()
-            
-            
-        except:
-            
-            print(f"error, {mode} didn't work")
-
+    if verbose:
+        print(f"Showing first row of pixel from first channel to check Values: {np_image[0][0]} - expecting ranger [0, 1]")
+        print(f"Max Value in np_iamge {np.max(np_image)} and min value {np.min(np_image)}")
+        
+        sleep(1)
     
+    # denormalize image
+    denorm_image = (np_image * 255).astype(np.uint8)
 
-    # # Show image
-    print("from center crop, going sleep")
+    if verbose:
+        print(f"Showing first row of pixel from first channel AFTER denormalization (*255): {denorm_image[0][0]}")
+        print(f" Max Value in np_iamge {np.max(denorm_image)} and min value {np.min(denorm_image)}")
     
-    
-    sleep(1000)
-
+        print("opening with RGB mode: not modified")
+        
+    image = Image.fromarray(denorm_image, 'RGB')
     
     # Calculate dimensions
     width, height = image.size
@@ -121,7 +108,6 @@ def center_crop_image(np_image) -> np.ndarray:
     
     # Convert back to numpy array and rescale back
     np_image = np.array(image) / 255.0 # must be float
-    print
     return np_image
 
 def resize_as_preprocess(np_image, image_size) -> np.ndarray:
@@ -136,11 +122,7 @@ def resize_as_preprocess(np_image, image_size) -> np.ndarray:
     """
 
     # Convert numpy array to PIL Image, rescaling assumes image being rescaled beforehand
-    image = Image.fromarray((np_image * 255).astype(np.uint8))
-
-    # Show image
-    print("from resize ")
-    #image.show()
+    image = Image.fromarray((np_image * 255).astype(np.uint8), 'RGB')
     
     # Resize the image to the target size
     image = image.resize(image_size)
