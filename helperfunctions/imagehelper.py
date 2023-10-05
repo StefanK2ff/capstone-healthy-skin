@@ -5,6 +5,8 @@ from PIL import Image
 import numpy as np
 import string 
 import random
+from time import sleep
+import matplotlib as plt
 
 def img_load_and_transform(image_path, target_size) -> np.ndarray:
 
@@ -19,6 +21,9 @@ def img_load_and_transform(image_path, target_size) -> np.ndarray:
     """ 
     # Load the image using PIL
     image = Image.open(image_path)
+
+    # show image
+    # image.show()
 
     # Get dimensions
     width, height = image.size
@@ -69,9 +74,35 @@ def center_crop_image(np_image) -> np.ndarray:
     Returns:
         np.ndarray : cropped image
     """
-
+    #image = Image.fromarray((np_image * 255).astype(np.uint8))
+    modes = ['1', 'L', 'P', 'RGB', 'RGBA', 'CMYK', 'YCbCr', 'LAB', 'HSV', 'I', 'F', 'LA', 'PA', 'RGBX', 'RGBa', 'La', 'I;16', 'I;16L', 'I;16B', 'I;16N', 'BGR;15', 'BGR;16', 'BGR;24']
     # Convert numpy array to PIL Image, rescaling assumes image being rescaled beforehand
-    image = Image.fromarray((np_image * 255).astype(np.uint8))
+    for mode in modes:
+        try:
+            print(f"trying {mode}")
+            #print(np_image)
+            # maximum vlaue of np_image
+            print(np.max(np_image))
+            print(np.min(np_image))
+            sleep(10)
+            image = Image.fromarray(np_image, mode=mode)
+
+            plt.imshow(image)
+            plt.show()
+            
+            
+        except:
+            
+            print(f"error, {mode} didn't work")
+
+    
+
+    # # Show image
+    print("from center crop, going sleep")
+    
+    
+    sleep(1000)
+
     
     # Calculate dimensions
     width, height = image.size
@@ -90,7 +121,7 @@ def center_crop_image(np_image) -> np.ndarray:
     
     # Convert back to numpy array and rescale back
     np_image = np.array(image) / 255.0 # must be float
-
+    print
     return np_image
 
 def resize_as_preprocess(np_image, image_size) -> np.ndarray:
@@ -106,6 +137,10 @@ def resize_as_preprocess(np_image, image_size) -> np.ndarray:
 
     # Convert numpy array to PIL Image, rescaling assumes image being rescaled beforehand
     image = Image.fromarray((np_image * 255).astype(np.uint8))
+
+    # Show image
+    print("from resize ")
+    #image.show()
     
     # Resize the image to the target size
     image = image.resize(image_size)
