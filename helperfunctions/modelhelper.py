@@ -3,9 +3,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+from keras import backend as K
 from keras.utils import to_categorical
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import confusion_matrix, roc_auc_score, classification_report
+import tensorflow as tf
 
 from .imagehelper import img_load_and_transform
 
@@ -142,3 +144,41 @@ def model_accuracy_on_test(model, test_df, targetvar, imagesize, verbose=2) -> t
         print(" > Done.")
 
     return (return_results, conf_matrix, roc_auc)
+
+
+
+def focal_loss_binary(alpha=0.25, gamma=2.0):
+    def focal_loss_fixed(y_true, y_pred):
+        pt_1 = tf.where(tf.equal(y_true, 1), y_pred, tf.ones_like(y_pred))
+        pt_0 = tf.where(tf.equal(y_true, 0), y_pred, tf.zeros_like(y_pred))
+        return -K.sum(alpha * K.pow(1. - pt_1, gamma) * K.log(pt_1 + K.epsilon())) \
+               -K.sum((1 - alpha) * K.pow(pt_0, gamma) * K.log(1. - pt_0 + K.epsilon()))
+    return focal_loss_fixed
+
+def focal_loss_multiclass(alpha, gamma=2.0):
+    alpha = tf.convert_to_tensor(alpha, dtype=tf.float32)
+    def multi_class_focal_loss(y_true, y_pred):
+        epsilon = 1.e-9
+        y_true = tf.convert_to_tensor(y_true, dtype=y_pred.dtype)
+        y_pred = tf.clip_by_value(y_pred, epsilon, 1. - epsilon)
+
+        model_out = tf.add(y_pred, epsilon)
+        ce = tf.multiply(y_true, -tf.math.log(model_out))
+        weight = tf.multiply(y_true, tf.pow(tf.subtract(1., model_out), gamma))
+        fl = tf.multiply(alpha, tf.multiply(weight, ce))
+        reduced_fl = tf.reduce_max(fl, axis=1)
+        return tf.reduce_mean(reduced_fl)
+    return multi_class_focal_loss
+
+def f1_score(y_true, y_pred):
+    # Calculate precision
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+    recall = true_positives / (possible_positives + K.epsilon())
+
+    # Calculate recall
+    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+    precision = true_positives / (predicted_positives + K.epsilon())
+
+    # Calculate F1 score
+    return 2*((precision*recall)/(precision+recall+K.epsilon()))
