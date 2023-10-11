@@ -31,7 +31,7 @@ def model_plot_accuracy(history) -> None:
     plt.legend(loc='lower right')
 
 
-def model_accuracy_on_test(model, test_df, targetvar, imagesize, verbose=2) -> tuple:
+def model_accuracy_on_test(model,  test_df, targetvar, imagesize, verbose=2) -> tuple:
     """
     Compute the accuracy of the model on the test set
 
