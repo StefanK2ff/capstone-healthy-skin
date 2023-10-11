@@ -145,6 +145,29 @@ def model_accuracy_on_test(model, test_df, targetvar, imagesize, verbose=2) -> t
 
     return (return_results, conf_matrix, roc_auc)
 
+def poly1_cross_entropy(logits, labels, epsilon=-1.0):
+    """
+    PolyLoss function with Poly1 variation.
+    
+    Parameters:
+    - logits: The network's output logits.
+    - labels: True labels.
+    - epsilon: A parameter for the Poly1 loss. Default is -1.0.
+    
+    Returns:
+    - Poly1 loss.
+    """
+    
+    # pt has shape [batch]
+    pt = tf.reduce_sum(labels * tf.nn.softmax(logits, axis=-1), axis=-1)
+    
+    # Compute softmax cross-entropy
+    CE = tf.nn.softmax_cross_entropy_with_logits(labels=labels, logits=logits)
+    
+    # Compute Poly1
+    Poly1 = CE + epsilon * (1 - pt)
+    
+    return tf.reduce_mean(Poly1)
 
 
 def focal_loss_binary(alpha=0.25, gamma=2.0):
