@@ -31,7 +31,7 @@ def model_plot_accuracy(history) -> None:
     plt.legend(loc='lower right')
 
 
-def model_accuracy_on_test(model, test_df, targetvar, imagesize, verbose=2) -> tuple:
+def model_accuracy_on_test(model, test_df, targetvar, imagesize, verbose=2, moredata=False) -> tuple:
     """
     Compute the accuracy of the model on the test set
 
@@ -40,7 +40,8 @@ def model_accuracy_on_test(model, test_df, targetvar, imagesize, verbose=2) -> t
         test_df (DataFrame): Test DataFrame
         targetvar (str): Target variable
         imagesize (tuple): Image size used to train the model
-        verbose (int, optional): Verbosity. Defaults to 1 (print messages), 2 (print messages and plots) 0 (silent)    
+        verbose (int, optional): Verbosity. Defaults to 1 (print messages), 2 (print messages and plots) 0 (silent)
+        moredata (bool, optional): defines, whether additional data was used by the model. Defaults to False.
 
     Returns:
         tuple: Test loss, test accuracy, confusion matrix, ROC AUC
@@ -49,6 +50,7 @@ def model_accuracy_on_test(model, test_df, targetvar, imagesize, verbose=2) -> t
     # load test images from test_df
     test_images = []
     test_labels = []
+    test_tabular_data = []
 
     # load test images
     if verbose >= 1:
@@ -63,6 +65,14 @@ def model_accuracy_on_test(model, test_df, targetvar, imagesize, verbose=2) -> t
         test_images.append(np.array(img)/255.0)
         test_labels.append(test_df.iloc[i][targetvar])
 
+        # Append the tabular data (sex, localization, age)
+        if moredata:
+            age = np.float32(test_df.iloc[i]['age'] / 100)
+            sex = np.int32(test_df.iloc[i]['sex'])
+            loc = np.int32(test_df.iloc[i]['localization'])
+            test_tabular_data.append([age, sex, loc])
+
+    
     if verbose >= 1:
         print(" > Test images loaded.")
         print("\n")
@@ -84,7 +94,11 @@ def model_accuracy_on_test(model, test_df, targetvar, imagesize, verbose=2) -> t
     if verbose >= 1:
         print(" > Getting model predictions...")
 
-    predictions = model.predict(test_images)
+    if moredata:
+        test_tabular_data = np.array(test_tabular_data, dtype=np.float32)
+        predictions = model.predict([test_images, test_tabular_data])
+    else:
+        predictions = model.predict(test_images)
 
     if verbose >= 1:
         print(" > Model predictions obtained.")
@@ -132,8 +146,12 @@ def model_accuracy_on_test(model, test_df, targetvar, imagesize, verbose=2) -> t
     # Evaluate the model on the test set
     if verbose >= 1:
         print(" > Evaluating model on test set...")
-          
-    results = model.evaluate(test_images, test_labels, verbose=0 if verbose == 0 else 1)
+
+    if moredata:
+        results = model.evaluate([test_images, test_tabular_data], test_labels, verbose=0 if verbose == 0 else 1)
+    else:     
+        results = model.evaluate(test_images, test_labels, verbose=0 if verbose == 0 else 1)
+    
     return_results = []
 
     for metric_value, metric_name in zip(results, model.metrics_names):
